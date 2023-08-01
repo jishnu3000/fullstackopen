@@ -34,8 +34,14 @@ app.get('/api/persons', (req, res) => {
     res.json(data)
 })
 
+app.get('/api/persons/:id', (req, res) => {
+    const id  = Number(req.params.id)
+    console.log(req.params);
+    const record = data.find(entry => entry.id === id)
+    res.json(record)
+})
+
 app.get('/info', (req, res) => {
-    // TODO
     let records = data.length
     let date = new Date().toUTCString()
 
