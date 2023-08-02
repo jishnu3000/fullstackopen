@@ -23,7 +23,12 @@ let data = [
         "id": 4,
         "name": "Mary Poppendieck", 
         "number": "39-23-6423122"
-    }
+    },
+    { 
+        "id": 5,
+        "name": "John Smith", 
+        "number": "33122"
+    },
 ]
 
 app.get('/', (req, res) => {
@@ -36,7 +41,6 @@ app.get('/api/persons', (req, res) => {
 
 app.get('/api/persons/:id', (req, res) => {
     const id  = Number(req.params.id)
-    console.log(req.params);
     const record = data.find(entry => entry.id === id)
     res.json(record)
 })
@@ -49,6 +53,61 @@ app.get('/info', (req, res) => {
         <p>Phonebook has info for ${records} people</p>
         <p>${date}</p>
     `)
+})
+
+app.delete('api/persons/:id', (req, res) => {
+    const id  = Number(req.params.id)
+    data = data.filter(entry => entry.id !== id)
+
+    res.status(204).end()
+})
+
+function idExists(id, arr){
+    let x = false
+    for (const d of data) {
+        if(d.id === id){
+            x = true
+            break
+        }
+    }
+    return x
+}
+
+function getRandomId(max) {
+    let id = Math.floor(Math.random() * max)
+    if (idExists(id, data)) { getRandomId(max) }
+    return id;
+}
+
+const nameInPhonebook = (name) => {
+    let x = false
+    for (const d of data){
+      if (d.name === name){
+        x = true
+        break
+      }
+    }
+    return x
+}
+
+app.post('/api/persons', (req, res) => {
+    const entry = req.body
+    
+    if (!entry.name || !entry.number) {
+        return res.status(400).json({
+            error: 'name or number is missing'
+        })
+    } else if (nameInPhonebook(entry.name)) {
+        return res.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+    
+    const id = getRandomId(1000000)
+    entry.id = id
+    data = data.concat(entry)
+    
+    res.json(entry)
 })
 
 const PORT = 3001
