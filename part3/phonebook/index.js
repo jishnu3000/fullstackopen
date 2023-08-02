@@ -1,7 +1,13 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
+morgan.token('data', (req, res) => {
+    return JSON.stringify(req.body)
+})
+
 app.use(express.json())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 
 let data = [
     { 
@@ -31,20 +37,19 @@ let data = [
     },
 ]
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
-})
-
+// GET all notes
 app.get('/api/persons', (req, res) => {
     res.json(data)
 })
 
+// GET a specific note
 app.get('/api/persons/:id', (req, res) => {
     const id  = Number(req.params.id)
     const record = data.find(entry => entry.id === id)
     res.json(record)
 })
 
+// GET info page
 app.get('/info', (req, res) => {
     let records = data.length
     let date = new Date().toUTCString()
@@ -55,6 +60,7 @@ app.get('/info', (req, res) => {
     `)
 })
 
+// DELETE a specific note
 app.delete('api/persons/:id', (req, res) => {
     const id  = Number(req.params.id)
     data = data.filter(entry => entry.id !== id)
@@ -90,6 +96,7 @@ const nameInPhonebook = (name) => {
     return x
 }
 
+// POST add a new note
 app.post('/api/persons', (req, res) => {
     const entry = req.body
     
