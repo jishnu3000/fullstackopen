@@ -34,11 +34,6 @@ let data = [
         "name": "Mary Poppendieck", 
         "number": "39-23-6423122"
     },
-    { 
-        "id": 5,
-        "name": "John Smith", 
-        "number": "33122"
-    },
 ]
 
 // GET all notes
