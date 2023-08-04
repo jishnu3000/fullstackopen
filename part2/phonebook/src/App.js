@@ -10,7 +10,7 @@ const App = () => {
   const [personsToShow, setPersonsToShow] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
-  const [newMessage, setNewMessage] = useState({messageText: '', messageType: ''})
+  const [newMessage, setNewMessage] = useState(null)
 
   useEffect(() => {
     PhoneBookService
@@ -66,7 +66,7 @@ const App = () => {
               messageType:'success'
             })
             setTimeout(() => {
-              setNewMessage({messageText: '', messageType: ''})
+              setNewMessage(null)
             }, 5000)
             setPersons(persons.map(person => person.id !== p.id ? person : returnedPerson))
             setPersonsToShow(personsToShow.map(person => person.id !== p.id ? person : returnedPerson))
@@ -77,7 +77,7 @@ const App = () => {
               type: "error"
             })
             setTimeout(() => {
-              setNewMessage({messageText: '', messageType: ''})
+              setNewMessage(null)
             }, 5000)
           })
           setNewName('')
@@ -89,7 +89,7 @@ const App = () => {
             messageType:'error'
           })
           setTimeout(() => {
-            setNewMessage({messageText: '', messageType: ''})
+            setNewMessage(null)
           }, 5000)
           setNewName('')
           setNewPhoneNumber('')
@@ -109,7 +109,7 @@ const App = () => {
             messageType:'success'
           })
           setTimeout(() => {
-            setNewMessage({messageText: '', messageType: ''})
+            setNewMessage(null)
           }, 5000)
           setPersons(persons.concat(returnedPerson))
           setPersonsToShow(personsToShow.concat(returnedPerson))
@@ -120,7 +120,7 @@ const App = () => {
             type: "error"
           })
           setTimeout(() => {
-            setNewMessage({messageText: '', messageType: ''})
+            setNewMessage(null)
           }, 5000)
         })
         setNewName('')
@@ -144,7 +144,7 @@ const App = () => {
             messageType:'error'
           })
           setTimeout(() => {
-            setNewMessage({messageText: '', messageType: ''})
+            setNewMessage(null)
           }, 5000)
           setPersons(persons.filter(person => person.id !== id))
           setPersonsToShow(personsToShow.filter(person => person.id !== id))
@@ -155,7 +155,7 @@ const App = () => {
           messageType:'success'
         })
         setTimeout(() => {
-          setNewMessage({messageText: '', messageType: ''})
+          setNewMessage(null)
         }, 5000)
     }
     else {
@@ -164,7 +164,7 @@ const App = () => {
         messageType:'error'
       })
       setTimeout(() => {
-        setNewMessage({messageText: '', messageType: ''})
+        setNewMessage(null)
       }, 5000)
     }
   }
@@ -172,7 +172,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-        <Notification message={newMessage} />
+        {newMessage ? (
+          <Notification message={newMessage} />
+        ): (
+          null
+        )}
         <Filter handleChange={handleFilterSearch} />
       <h3>add a new</h3>
       <PersonForm handleSubmit={addNewPerson} name={newName} handleName={handleNewNameChange} number={newPhoneNumber} handleNumber={handleNewPhoneNumberChange} />
