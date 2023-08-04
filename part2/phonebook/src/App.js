@@ -70,9 +70,18 @@ const App = () => {
             }, 5000)
             setPersons(persons.map(person => person.id !== p.id ? person : returnedPerson))
             setPersonsToShow(personsToShow.map(person => person.id !== p.id ? person : returnedPerson))
-            setNewName('')
-            setNewPhoneNumber('')
           })
+          .catch(error => {
+            setNewMessage({
+              text: error.response.data.error,
+              type: "error"
+            })
+            setTimeout(() => {
+              setNewMessage({messageText: '', messageType: ''})
+            }, 5000)
+          })
+          setNewName('')
+          setNewPhoneNumber('')
         }
         else {
           setNewMessage({
@@ -90,7 +99,6 @@ const App = () => {
       const newPerson = {
         name: newName,
         number: newPhoneNumber,
-        // id: persons.length + 1
       }
       
       PhoneBookService
@@ -105,9 +113,18 @@ const App = () => {
           }, 5000)
           setPersons(persons.concat(returnedPerson))
           setPersonsToShow(personsToShow.concat(returnedPerson))
-          setNewName('')
-          setNewPhoneNumber('')
         })
+        .catch(error => {
+          setNewMessage({
+            text: error.response.data.error,
+            type: "error"
+          })
+          setTimeout(() => {
+            setNewMessage({messageText: '', messageType: ''})
+          }, 5000)
+        })
+        setNewName('')
+        setNewPhoneNumber('')
     }
   }
 
