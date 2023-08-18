@@ -56,6 +56,54 @@ test('a new blog post can be created', async () => {
     expect(titles).toContain('Test Blog')
 }, 100000)
 
+test('if the likes property is missing default to 0', async () => {
+    const newBlog = {
+        title: "Test Blog",
+        author: "Test author",
+        url: "www.testblog.com",
+        __v: 0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    const findBlog = blogsAtEnd.find(blog => blog.title === 'Test Blog')
+    expect(findBlog.likes).toBe(0)
+}, 100000)
+
+test('if title is missing, response is 400 Bad Request', async () => {
+    const newBlog = {
+        author: "Test author",
+        url: "www.testblog.com",
+        likes: 4,
+        __v: 0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+}, 100000)
+
+test('if url is missing, response is 400 Bad Request', async () => {
+    const newBlog = {
+        title: "Test Blog",
+        author: "Test author",
+        likes: 4,
+        __v: 0
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+}, 100000)
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
