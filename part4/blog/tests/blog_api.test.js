@@ -104,6 +104,43 @@ test('if url is missing, response is 400 Bad Request', async () => {
         .expect(400)
 }, 100000)
 
+test('a blog can be deleted', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+    const titles = blogsAtEnd.map(blog => blog.title)
+    expect(titles).not.toContain(blogToDelete.title)
+})
+
+test('a blog can be updated', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToUpdate = blogsAtStart[0]
+    
+    const newBlog = {
+        title: "Test Blog",
+        author: "Test author",
+        url: "www.testblog.com",
+        likes: 4,
+        __v: 0
+    }
+
+    await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(newBlog)
+        .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    const titles = blogsAtEnd.map(blog => blog.title)
+    expect(titles).toContain(newBlog.title)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
