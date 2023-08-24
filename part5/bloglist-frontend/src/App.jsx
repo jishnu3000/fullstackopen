@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification  from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [info, setInfo] = useState({ message: null})
 
   useEffect(() => {
     const getData = async () => {
@@ -34,6 +36,27 @@ const App = () => {
     }
   }, [])
 
+  const notifyWith = (message, type='info') => {
+    setInfo({
+      message, type
+    })
+
+    setTimeout(() => {
+      setInfo({ message: null} )
+    }, 3000)
+  }
+
+  const cleanLoginForm = () => {
+    setUsername('')
+    setPassword('')
+  }
+
+  const cleanBlogForm = () => {
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -42,10 +65,11 @@ const App = () => {
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+      cleanLoginForm()
     } catch (exception) {
-      console.log(exception);
+      console.log(exception.response.data.error)
+      notifyWith('wrong username or password', 'error')
+      cleanLoginForm()
     }
   }
 
@@ -69,12 +93,11 @@ const App = () => {
     try {
       const createdBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(createdBlog))
+      notifyWith(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
     } catch (exception) {
       console.log(exception);
     }
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    cleanBlogForm()
   }
  
   return (
@@ -82,6 +105,7 @@ const App = () => {
       { user === null ? 
         <div>
           <h2>log in to application</h2>
+          <Notification info={info} />
           <LoginForm handleSubmit={handleLogin} 
             name={username} handleName={({ target }) => setUsername(target.value)} 
             pwd={password} handlePwd={({ target }) => setPassword(target.value)}
@@ -89,6 +113,7 @@ const App = () => {
         </div> :
         <div>
           <h2>blogs</h2>
+          <Notification info={info} />
           <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
           <h2>create new</h2>
           <BlogForm handleSubmit={addNewBlog}
