@@ -50,12 +50,6 @@ const App = () => {
     setPassword('')
   }
 
-  const cleanBlogForm = () => {
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -64,12 +58,11 @@ const App = () => {
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      cleanLoginForm()
     } catch (exception) {
       console.log(exception.response.data.error)
       notifyWith('wrong username or password', 'error')
-      cleanLoginForm()
     }
+    cleanLoginForm()
   }
 
   const handleLogout = (event) => {
@@ -89,7 +82,6 @@ const App = () => {
     } catch (exception) {
       console.log(exception);
     }
-    cleanBlogForm()
   }
  
   return (
@@ -112,7 +104,7 @@ const App = () => {
             <BlogForm handleSubmit={addNewBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} userName={user.name} />
           )}
         </div> 
       }

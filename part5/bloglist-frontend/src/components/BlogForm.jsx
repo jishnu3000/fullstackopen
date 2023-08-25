@@ -12,11 +12,14 @@ const BlogForm = ({ handleSubmit }) => {
             author: author,
             url: url
         })
+        setTitle('')
+        setAuthor('')
+        setUrl('')
     }
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={addBlog}>
                 <div>
                     title: <input type="text" value={title} onChange={({ target }) => setTitle(target.value)}/>
                 </div>
