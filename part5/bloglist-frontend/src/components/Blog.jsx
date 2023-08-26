@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, likeButton, removeButton, userId }) => {
   const [show, setShow] = useState(false)
@@ -21,7 +21,7 @@ const Blog = ({ blog, likeButton, removeButton, userId }) => {
       <div>
         {blog.title} {blog.author} <button onClick={toggleShow}>{ show ? 'hide' : 'view' }</button>
       </div>
-      { show ? 
+      { show ?
         <div>
           <div>
             {blog.url}
