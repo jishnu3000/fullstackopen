@@ -26,12 +26,27 @@ const App = () => {
     getData().catch(error => console.log(error))
   }, [user])
 
+  const decodeToken = (token) => {
+    return JSON.parse(atob(token.split('.')[1]))
+  }
+
+  const tokenExpired = (user) => {        
+    const decodedUser = decodeToken(user.token)
+    return decodedUser.exp * 1000 < new Date().getTime()
+};
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      if (tokenExpired(user)) {
+        window.localStorage.removeItem('loggedBlogAppUser')
+        blogService.setToken(null)
+        setUser(null)
+      } else {
+        setUser(user)
+        blogService.setToken(user.token)
+      }
     }
   }, [])
 
@@ -91,11 +106,23 @@ const App = () => {
     }
     try {
       await blogService.update(id, newBlog)
+      setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : newBlog))
     } catch (exception) {
       console.log(exception);
     }
-    setBlogs(blogs.map(blog => blog.id !== blogObject.id ? blog : newBlog))
-  } 
+  }
+  
+  const removeBlog = async (id) => {
+    const blogToDelete = blogs.find(blog => blog.id === id)
+    if (window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)) {
+      try {
+        await blogService.deleteBlog(id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+      } catch (exception) {
+        console.log(exception);
+      }
+    }
+  }
  
   return (
     <div>
@@ -117,7 +144,12 @@ const App = () => {
             <BlogForm handleSubmit={addNewBlog} />
           </Togglable>
           {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-            <Blog key={blog.id} blog={blog} userName={user.name} likeButton={updateLikes} />
+            <Blog key={blog.id} 
+              blog={blog}
+              likeButton={updateLikes} 
+              removeButton={removeBlog}
+              userId={decodeToken(user.token).id}
+            />
           )}
         </div> 
       }
