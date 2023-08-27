@@ -18,16 +18,34 @@ const BlogForm = ({ handleSubmit }) => {
   }
 
   return (
-    <div>
+    <div className='formDiv'>
       <form onSubmit={addBlog}>
         <div>
-                    title: <input type="text" value={title} onChange={({ target }) => setTitle(target.value)}/>
+          title:
+          <input
+            type="text"
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+            placeholder='enter title'
+          />
         </div>
         <div>
-                    author: <input type="text" value={author} onChange={({ target }) => setAuthor(target.value)}/>
+          author:
+          <input
+            type="text"
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+            placeholder='enter author'
+          />
         </div>
         <div>
-                    url: <input type="text" value={url} onChange={({ target }) => setUrl(target.value)}/>
+          url:
+          <input
+            type="text"
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+            placeholder='enter url'
+          />
         </div>
         <button type="submit">create</button>
       </form>
