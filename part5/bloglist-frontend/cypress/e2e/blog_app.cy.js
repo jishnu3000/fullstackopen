@@ -36,4 +36,21 @@ describe('Blog app', function() {
         .and('have.css', 'border-style', 'solid')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'jishnu2', password: 'asdfzxcv' })
+      cy.contains('Jishnu J logged in')
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('new blog').click()
+      cy.get('#title').type('Test Blog 1')
+      cy.get('#author').type('Test Author 1')
+      cy.get('#url').type('www.testblog1.com')
+      cy.get('#blog-submit').click()
+
+      cy.contains('Test Blog 1 Test Author 1')
+    })
+  })
 })
