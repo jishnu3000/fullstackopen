@@ -20,7 +20,7 @@ const blog = {
 test('renders title and author, but not URL or number of likes by default', () => {
   const { container } = render(<Blog blog={blog} userId={'jishnu100'} />)
 
-  const divTitle = container.querySelector('.titleAuthor')
+  const divTitle = container.querySelector('.title-author')
   expect(divTitle).toHaveTextContent('Test Blog 1')
 
   const divDetails = container.querySelector('.details')
