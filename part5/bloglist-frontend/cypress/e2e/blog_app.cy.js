@@ -1,3 +1,5 @@
+import { func } from 'prop-types'
+
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -41,6 +43,21 @@ describe('Blog app', function() {
     beforeEach(function() {
       cy.login({ username: 'jishnu2', password: 'asdfzxcv' })
       cy.contains('Jishnu J logged in')
+      cy.createBlog({
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/'
+      })
+      cy.createBlog({
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
+      })
+      cy.createBlog({
+        title: 'Canonical string reduction',
+        author: 'Edsger W. Dijkstra',
+        url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html'
+      })
     })
 
     it('A blog can be created', function() {
@@ -51,6 +68,15 @@ describe('Blog app', function() {
       cy.get('#blog-submit').click()
 
       cy.contains('Test Blog 1 Test Author 1')
+    })
+
+    it('Users can like a blog', function() {
+      cy.contains('React patterns')
+        .get('#view-button').click()
+
+      cy.get('.likes').contains('likes 0')
+      cy.get('.likes').get('#like-button').click()
+      cy.get('.likes').contains('likes 1')
     })
   })
 })
