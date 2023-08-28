@@ -9,6 +9,12 @@ describe('Blog app', function() {
       password: 'asdfzxcv'
     }
     cy.request('POST', 'http://localhost:3003/api/users', user)
+    const user2 = {
+      name: 'John Smith',
+      username: 'johnsmith4',
+      password: 'uiophjkl'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users', user2)
     cy.visit('http://localhost:5173')
   })
 
@@ -58,9 +64,19 @@ describe('Blog app', function() {
         author: 'Edsger W. Dijkstra',
         url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html'
       })
+      cy.get('#logout-button').click()
+      cy.login({ username: 'johnsmith4', password: 'uiophjkl' })
+      cy.createBlog({
+        title: 'John Smith Blog',
+        author: 'John S. Smith',
+        url: 'www.johnsmithblog.com'
+      })
+      cy.get('#logout-button').click()
     })
 
     it('A blog can be created', function() {
+      cy.login({ username: 'jishnu2', password: 'asdfzxcv' })
+
       cy.contains('new blog').click()
       cy.get('#title').type('Test Blog 1')
       cy.get('#author').type('Test Author 1')
@@ -71,9 +87,11 @@ describe('Blog app', function() {
     })
 
     it('Users can like a blog', function() {
+      cy.login({ username: 'jishnu2', password: 'asdfzxcv' })
+
       cy.get('.blog')
         .contains('React patterns')
-        .get('#view-button').click()
+        .find('#view-button').click()
 
       cy.get('.likes').contains('likes 0')
       cy.get('.likes').get('#like-button').click()
@@ -81,10 +99,25 @@ describe('Blog app', function() {
     })
 
     it('The user who created a blog can delete it', function() {
-      cy.get('.title-author').contains('Go To Statement Considered Harmful').parent().as('Blog')
+      cy.login({ username: 'jishnu2', password: 'asdfzxcv' })
+
+      cy.contains('Go To Statement Considered Harmful').parent().as('Blog')
       cy.get('@Blog').find('#view-button').click()
       cy.get('@Blog').find('#remove-button').click()
+
       cy.contains('Go To Statement Considered Harmful').should('not.exist')
+    })
+
+    it('Only the creator can see the delete button of a blog', function() {
+      cy.login({ username: 'johnsmith4', password: 'uiophjkl' })
+
+      cy.contains('John Smith Blog').parent().as('Blog')
+      cy.get('@Blog').find('#view-button').click()
+      cy.get('@Blog').find('#remove-button').should('exist')
+
+      cy.contains('React patterns').parent().as('Blog2')
+      cy.get('@Blog2').find('#view-button').click()
+      cy.get('@Blog2').find('#remove-button').should('not.exist')
     })
   })
 })
