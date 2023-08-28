@@ -1,5 +1,3 @@
-import { func } from 'prop-types'
-
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
@@ -94,7 +92,7 @@ describe('Blog app', function() {
         .find('#view-button').click()
 
       cy.get('.likes').contains('likes 0')
-      cy.get('.likes').get('#like-button').click()
+      cy.get('.likes').find('#like-button').click()
       cy.get('.likes').contains('likes 1')
     })
 
@@ -118,6 +116,49 @@ describe('Blog app', function() {
       cy.contains('React patterns').parent().as('Blog2')
       cy.get('@Blog2').find('#view-button').click()
       cy.get('@Blog2').find('#remove-button').should('not.exist')
+    })
+
+    it('Blogs are ordered according to likes', function() {
+      cy.login({ username: 'jishnu2', password: 'asdfzxcv' })
+
+      cy.contains('React patterns').parent().as('Blog')
+      cy.get('@Blog').find('#view-button').click()
+      cy.get('@Blog').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog').find('#like-button').click()
+      cy.wait(1100)
+
+      cy.contains('Go To Statement Considered Harmful').parent().as('Blog2')
+      cy.get('@Blog2').find('#view-button').click()
+      cy.get('@Blog2').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog2').find('#like-button').click()
+      cy.wait(1100)
+
+      cy.contains('Canonical string reduction').parent().as('Blog3')
+      cy.get('@Blog3').find('#view-button').click()
+      cy.get('@Blog3').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog3').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog3').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog3').find('#like-button').click()
+      cy.wait(1100)
+      cy.get('@Blog3').find('#like-button').click()
+      cy.wait(1100)
+
+      cy.contains('John Smith Blog').parent().as('Blog4')
+      cy.get('@Blog4').find('#view-button').click()
+      cy.get('@Blog4').find('#like-button').click()
+      cy.wait(1100)
+
+      cy.get('.blog').eq(0).should('contain', 'Canonical string reduction')
+      cy.get('.blog').eq(1).should('contain', 'React patterns')
+      cy.get('.blog').eq(2).should('contain', 'Go To Statement Considered Harmful')
+      cy.get('.blog').eq(3).should('contain', 'John Smith Blog')
     })
   })
 })
