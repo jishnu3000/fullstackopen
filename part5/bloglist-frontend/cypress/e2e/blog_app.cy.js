@@ -71,12 +71,20 @@ describe('Blog app', function() {
     })
 
     it('Users can like a blog', function() {
-      cy.contains('React patterns')
+      cy.get('.blog')
+        .contains('React patterns')
         .get('#view-button').click()
 
       cy.get('.likes').contains('likes 0')
       cy.get('.likes').get('#like-button').click()
       cy.get('.likes').contains('likes 1')
+    })
+
+    it('The user who created a blog can delete it', function() {
+      cy.get('.title-author').contains('Go To Statement Considered Harmful').parent().as('Blog')
+      cy.get('@Blog').find('#view-button').click()
+      cy.get('@Blog').find('#remove-button').click()
+      cy.contains('Go To Statement Considered Harmful').should('not.exist')
     })
   })
 })
