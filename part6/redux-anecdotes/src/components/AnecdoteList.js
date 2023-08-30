@@ -3,14 +3,13 @@ import { addVote } from '../reducers/anecdoteReducer'
 
 const Anecdote = ({ anecdote, vote }) => {
   return (
-    <div key={anecdote.id}>
+    <div>
       <div>
-            {anecdote.content}
-          </div>
-          <div>
-            has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
-          </div>
+        {anecdote.content}
+      </div>
+      <div>
+        has {anecdote.votes} <button onClick={() => vote(anecdote.id)}>vote</button>
+      </div>
     </div>
   )
 }
@@ -27,7 +26,7 @@ const AnecdoteList = () => {
   return (
     <div>
       {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
-        <Anecdote anecdote={anecdote} vote={vote} />
+        <Anecdote key={anecdote.id} anecdote={anecdote} vote={vote} />
       )}
     </div>
   )
