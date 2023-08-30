@@ -15,11 +15,15 @@ const Anecdote = ({ anecdote, vote }) => {
 }
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state)
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    if (filter === '') {
+      return anecdotes
+    }
+    return anecdotes.filter(anecdote => anecdote.content.toLowerCase().indexOf(filter.toLowerCase()) !== -1)
+  })
   const dispatch = useDispatch()
 
   const vote = (id) => {
-    console.log('vote', id)
     dispatch(addVote(id))
   }
 
