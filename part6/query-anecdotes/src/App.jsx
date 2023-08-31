@@ -1,19 +1,26 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
+import { useQuery } from '@tanstack/react-query'
+import { getAll } from './services/requests'
 
 const App = () => {
+
+  const result = useQuery({
+    queryKey: ['anecdotes'],
+    queryFn: getAll,
+  })
 
   const handleVote = (anecdote) => {
     console.log('vote')
   }
+  
+  if (result.isLoading) {
+    return <div>loading data...</div>
+  } else if (result.isError) {
+    return <div>anecdote service not available due to problems in server</div>
+  }
 
-  const anecdotes = [
-    {
-      "content": "If it hurts, do it more often",
-      "id": "47145",
-      "votes": 0
-    },
-  ]
+  const anecdotes = result.data
 
   return (
     <div>
