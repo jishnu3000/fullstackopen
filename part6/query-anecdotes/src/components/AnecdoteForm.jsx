@@ -10,6 +10,12 @@ const AnecdoteForm = () => {
     onSuccess: (newAnecdote) => {
       console.log(newAnecdote)
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+    },
+    onError: (result) => {
+      notifDispatch({ type: 'SET_NOTIF', text: `${result}`})
+      setTimeout(() => {
+        notifDispatch({ type: 'CLEAR_NOTIF'})
+      }, 5000)
     }
   })
 
