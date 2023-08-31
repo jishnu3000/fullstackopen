@@ -8,6 +8,7 @@ const App = () => {
   const result = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAll,
+    refetchOnWindowFocus: false
   })
 
   const handleVote = (anecdote) => {
