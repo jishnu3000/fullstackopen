@@ -6,14 +6,16 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification  from './components/Notification'
 import Togglable from './components/Togglable'
+import { useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [info, setInfo] = useState({ message: null })
   const blogFormRef = useRef()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const getData = async () => {
@@ -50,16 +52,6 @@ const App = () => {
     }
   }, [])
 
-  const notifyWith = (message, type='info') => {
-    setInfo({
-      message, type
-    })
-
-    setTimeout(() => {
-      setInfo({ message: null } )
-    }, 3000)
-  }
-
   const cleanLoginForm = () => {
     setUsername('')
     setPassword('')
@@ -75,7 +67,7 @@ const App = () => {
       setUser(user)
     } catch (exception) {
       console.log(exception.response.data.error)
-      notifyWith('wrong username or password', 'error')
+      dispatch(setNotification({ message: 'wrong username or password', type: 'error' }, 5))
     }
     cleanLoginForm()
   }
@@ -93,7 +85,7 @@ const App = () => {
       const createdBlog = await blogService.create(blogObject)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(createdBlog))
-      notifyWith(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
+      dispatch(setNotification({ message: `a new blog ${createdBlog.title} by ${createdBlog.author} added`, type: 'info' }, 5))
     } catch (exception) {
       console.log(exception)
     }
@@ -129,7 +121,7 @@ const App = () => {
       { user === null ?
         <div>
           <h2>log in to application</h2>
-          <Notification info={info} />
+          <Notification />
           <LoginForm handleSubmit={handleLogin}
             name={username} handleName={({ target }) => setUsername(target.value)}
             pwd={password} handlePwd={({ target }) => setPassword(target.value)}
@@ -137,7 +129,7 @@ const App = () => {
         </div> :
         <div>
           <h2>blogs</h2>
-          <Notification info={info} />
+          <Notification />
           <p>{user.name} logged in <button id='logout-button' onClick={handleLogout}>logout</button></p>
           <h2>create new</h2>
           <Togglable buttonLabel='new blog' ref={blogFormRef}>
